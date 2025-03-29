@@ -1,3 +1,4 @@
-# Vrajendra FAQ
+# Вопросы-ответы к Гуру
 
-Вопросы-ответы Василия Тушкина https://www.youtube.com/playlist?list=PL_Ipm4Rf9xvHEN4mzo8keCRb7EsC03xVO
+* [Враджендра Кумар Прабху (Василий Тушкин)](krishnized.github.io/questions/vrajendra)
+* [Чайтанья Чандра Чаран Прабху (Александр Хакимов)](krishnized.github.io/questions/cccp)
