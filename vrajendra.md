@@ -5618,3 +5618,32 @@
 -->
 
 <p align="center"><a href="https://github.com/krishnized">ॐ</a></p>
+
+<style>
+	body {
+		.markdown-body, main {
+			position: relative;
+
+			/* hide github h1 */
+			h1:first-of-type {
+				display: none;
+			}
+
+			a {
+				text-decoration-color: rgb(from currentColor r g b / 20%);
+				text-underline-offset: .2em;
+				text-decoration-line: underline;
+				&.anchorjs-link {
+					text-decoration: none;
+				}
+			}
+			a:hover {
+				text-decoration-color: currentColor;
+			}
+
+			ul {
+				padding-left: 1.5ch;
+			}
+		}
+	}
+</style>
