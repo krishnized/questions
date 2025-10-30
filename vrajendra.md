@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/style.css">
+
 # Ответы на вопросы. Враджендра Кумар Прабху
 
 [![Задать Вопрос](https://img.shields.io/badge/-%D0%97%D0%B0%D0%B4%D0%B0%D1%82%D1%8C%20%D0%92%D0%BE%D0%BF%D1%80%D0%BE%D1%81-brightgreen?style=for-the-badge&logo=apache)](http://vrajendra.ru/vopros/)
@@ -5618,32 +5620,3 @@
 -->
 
 <p align="center"><a href="https://github.com/krishnized">ॐ</a></p>
-
-<style>
-	body {
-		.markdown-body, main {
-			position: relative;
-
-			/* hide github h1 */
-			h1:first-of-type {
-				display: none;
-			}
-
-			a {
-				text-decoration-color: rgb(from currentColor r g b / 20%);
-				text-underline-offset: .2em;
-				text-decoration-line: underline;
-				&.anchorjs-link {
-					text-decoration: none;
-				}
-			}
-			a:hover {
-				text-decoration-color: currentColor;
-			}
-
-			ul {
-				padding-left: 1.5ch;
-			}
-		}
-	}
-</style>
