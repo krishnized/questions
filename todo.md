@@ -1,4 +1,5 @@
 ## Website
+
 * [ ] episode navigation
 * [ ] inline playback preview
 * [ ] (semantic) search with filter by the author
@@ -6,6 +7,9 @@
 * [ ] support project button
 
 ## Questions
-* [ ] check all names
+
+* [ ] Check all names to be present
+* [ ] insert all links to SB
+* [ ] Add keywords
 * [ ] add gurudev questions
 * [ ] add bvg questions

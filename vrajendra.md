@@ -2,6 +2,7 @@
 
 # Ответы на вопросы. Враджендра Кумар Прабху [![Задать Вопрос](https://img.shields.io/badge/-%D0%97%D0%B0%D0%B4%D0%B0%D1%82%D1%8C%20%D0%92%D0%BE%D0%BF%D1%80%D0%BE%D1%81-brightgreen?style=for-the-badge&logo=apache)](http://vrajendra.ru/vopros/)
 
+
 ## [Выпуск 187](https://youtu.be/uUHyfig7uQU?si=gWGE6rUQaRHrWVdj)
 
 * [0:36](https://youtu.be/uUHyfig7uQU?t=36s) — _Неофит_: Растафарианство: курят марихуану, поют, поклоняются Джа. Говорят, Джа от Яхве. Кто такой Яхве? Ведами марихуана запрещена. Они вегетарианцы. Это полноценная религия, как ислам или христианство?
