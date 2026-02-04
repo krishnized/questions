@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title | default: site.title }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown.min.css">
+  <style>
+    body { display: flex; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
+    aside { position: fixed; right: 0; top: 0; height: 100vh; overflow-y: auto; padding: 1rem .5rem; font-size: 0.8em; flex-shrink: 0; scrollbar-width: none; overscroll-behavior: contain; }
+    aside::-webkit-scrollbar { display: none; }
+    aside a { display: block; padding: .2em .5em; color: #888; text-decoration: none; transition: color .15s, background .15s; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    aside a:hover { color: #0366d6; background: #e8f0fe; }
+    aside a.active { color: #0366d6; background: #e8f0fe; }
+    .markdown-body { max-width: 800px; margin: 0 auto; padding: 2rem; padding-right: 200px; flex: 1; min-width: 0; }
+    @media (max-width: 900px) {
+      aside { display: none; }
+      .markdown-body { padding: 1rem; padding-right: 1rem; }
+    }
+
+    .markdown-body, main {
+      position: relative;
+
+      section { position: relative; }
+
+      h1:first-of-type {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      h2 {
+        position: sticky;
+        top: 0;
+        background: white;
+        padding: .5rem 0;
+        margin: 0;
+        z-index: 1;
+      }
+
+      a {
+        text-underline-offset: .2em;
+        &.anchorjs-link {
+          text-decoration: none;
+        }
+      }
+
+      li > a[href^="#"] {
+        color: #888;
+        text-decoration: none;
+        font-size: 0.85em;
+        background: #f0f0f0;
+        padding: .15em .5em;
+        border-radius: 1em;
+        &:hover { color: #0366d6; background: #e0e8f0; }
+      }
+
+      ul {
+        padding-left: 1.5ch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside id="toc"><nav></nav></aside>
+  <main class="markdown-body">
+    {{ content }}
+  </main>
+  <script>
+    // Wrap each h2 + following content into sections
+    const main = document.querySelector('main');
+    const headings = [...main.querySelectorAll('h2[id]')];
+    console.log('Headings found:', headings.length);
+
+    headings.forEach(h => {
+      const section = document.createElement('section');
+      section.id = 's-' + h.id;
+      h.removeAttribute('id');
+      h.before(section);
+      section.appendChild(h);
+      while (section.nextElementSibling && section.nextElementSibling.tagName !== 'H2') {
+        section.appendChild(section.nextElementSibling);
+      }
+    });
+
+    // Build TOC
+    const nav = document.querySelector('#toc nav');
+    const aside = document.querySelector('#toc');
+    const sections = [...main.querySelectorAll('section[id]')];
+    console.log('Sections created:', sections.length);
+    const sectionMap = new Map();
+
+    sections.forEach(s => {
+      const h = s.querySelector('h2');
+      const a = document.createElement('a');
+      a.href = '#' + s.id;
+      a.textContent = h.textContent.trim();
+      sectionMap.set(a, s);
+      nav.appendChild(a);
+    });
+
+    // Click to smooth scroll to section
+    nav.onclick = e => {
+      const a = e.target.closest('a');
+      if (a && sectionMap.has(a)) {
+        e.preventDefault();
+        e.stopPropagation();
+        sectionMap.get(a).scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    // Sync TOC scroll with page scroll
+    const tocLinks = [...nav.querySelectorAll('a')];
+    let active = null;
+
+    function updateActive() {
+      let current = null;
+      for (const s of sections) {
+        if (s.getBoundingClientRect().top <= 120) current = s;
+      }
+      if (active !== current && current) {
+        active = current;
+        tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
+      }
+      // Sync menu scroll proportionally to page scroll
+      const scrollRatio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+      aside.scrollTop = scrollRatio * (aside.scrollHeight - aside.clientHeight);
+    }
+    window.addEventListener('scroll', updateActive, { passive: true });
+    setTimeout(updateActive, 100);
+
+    // Tag filtering (tags are capitalized Cyrillic words without dashes)
+    const lis = document.querySelectorAll('li');
+    const isTag = h => /^[А-ЯЁ][а-яё_]+$/.test(h);
+
+    function filter(tag) {
+      if (!isTag(tag)) { lis.forEach(li => li.hidden = false); return; }
+      lis.forEach(li => li.hidden = !li.textContent.includes('#' + tag));
+    }
+
+    window.addEventListener('hashchange', () => filter(decodeURIComponent(location.hash.slice(1))));
+    filter(decodeURIComponent(location.hash.slice(1)));
+
+    document.addEventListener('click', e => {
+      const a = e.target.closest('li > a[href^="#"]');
+      if (a) {
+        e.preventDefault();
+        const tag = decodeURIComponent(a.hash.slice(1));
+        location.hash = location.hash === '#' + tag ? '' : tag;
+      }
+    });
+  </script>
+</body>
+</html>
