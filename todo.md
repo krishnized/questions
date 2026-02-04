@@ -1,6 +1,6 @@
 ## Website
 
-* [ ] episode navigation
+* [x] episode navigation
 * [ ] inline playback preview
 * [ ] (semantic) search with filter by the author
 * [ ] support author button
@@ -10,8 +10,8 @@
 ## Questions
 
 * [ ] Check all names to be present
-* [ ] insert all links to SB
-* [ ] Add keywords / topic tags
+* [x] insert all links to SB
+* [x] Add keywords / topic tags
 * [ ] add gurudev questions
 * [ ] add bvg questions
 
