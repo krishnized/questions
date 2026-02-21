@@ -69,9 +69,22 @@
         padding-left: 1.5ch;
       }
     }
+
+    .yt-modal {
+      display: none; position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,.85); align-items: center; justify-content: center;
+      &.open { display: flex; }
+      iframe {
+        width: min(90vw, 960px); aspect-ratio: 16/9; border: none; border-radius: 8px;
+      }
+      @media (max-width: 900px) {
+        iframe { width: 100vw; border-radius: 0; }
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="yt-modal" id="yt-modal"><iframe id="yt-frame" allowfullscreen allow="autoplay"></iframe></div>
   <aside id="toc"><nav></nav></aside>
   <main class="markdown-body">
     {{ content }}
@@ -168,6 +181,44 @@
         const tag = decodeURIComponent(a.hash.slice(1));
         location.hash = location.hash === '#' + tag ? '' : tag;
       }
+    });
+
+    // YouTube modal player
+    const modal = document.getElementById('yt-modal');
+    const frame = document.getElementById('yt-frame');
+
+    function ytId(url) {
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+      const p = u.pathname.match(/\/(live|embed|v|shorts)\/([^/?]+)/);
+      return p ? p[2] : u.searchParams.get('v');
+    }
+
+    function ytTime(url) {
+      const t = new URL(url).searchParams.get('t');
+      if (!t) return 0;
+      const m = t.match(/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/);
+      return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0));
+    }
+
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[href*="youtube.com"], a[href*="youtu.be"]');
+      if (!a || a.classList.contains('anchor')) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const id = ytId(a.href);
+      console.log(a.href)
+      if (!id) return;
+      frame.src = `https://www.youtube.com/embed/${id}?autoplay=1&start=${ytTime(a.href)}`;
+      modal.classList.add('open');
+    }, true);
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) { modal.classList.remove('open'); frame.src = ''; }
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) { modal.classList.remove('open'); frame.src = ''; }
     });
   </script>
 </body>
