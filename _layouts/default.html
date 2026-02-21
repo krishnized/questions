@@ -34,6 +34,18 @@
         background: white;
         padding: .5rem 0;
         z-index: 1;
+
+        .anchor {
+          float: none;
+          opacity: 0;
+          color: #ccc;
+          text-decoration: none;
+          font-weight: 300;
+          cursor: pointer;
+          transition: opacity .15s, color .15s;
+        }
+        &:hover .anchor { opacity: 1; }
+        .anchor:hover { color: #0366d6; }
       }
 
       a {
@@ -85,6 +97,16 @@
     const nav = document.querySelector('#toc nav');
     const aside = document.querySelector('#toc');
     const sections = [...main.querySelectorAll('section[id]')];
+
+    // Add anchor links to headings
+    sections.forEach(s => {
+      const h = s.querySelector('h2');
+      const a = document.createElement('a');
+      a.className = 'anchor';
+      a.href = '#' + s.id;
+      a.textContent = '#';
+      h.prepend(a);
+    });
     console.log('Sections created:', sections.length);
     const sectionMap = new Map();
 
@@ -92,7 +114,7 @@
       const h = s.querySelector('h2');
       const a = document.createElement('a');
       a.href = '#' + s.id;
-      a.textContent = h.textContent.trim();
+      a.textContent = [...h.childNodes].filter(n => n.nodeType === 3 || !n.classList.contains('anchor')).map(n => n.textContent).join('').trim();
       sectionMap.set(a, s);
       nav.appendChild(a);
     });
