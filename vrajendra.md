@@ -1,10 +1,12 @@
-<link rel="stylesheet" href="./style.css">
-
-# Ответы на вопросы <br><sup>Враджендра Кумар Прабху</sup>
-
-[![Задать Вопрос](https://img.shields.io/badge/-%D0%97%D0%B0%D0%B4%D0%B0%D1%82%D1%8C%20%D0%92%D0%BE%D0%BF%D1%80%D0%BE%D1%81-brightgreen?style=for-the-badge&logo=robinhood)](http://vrajendra.ru/vopros/) [![Поддержать](https://img.shields.io/badge/-%D0%9F%D0%BE%D0%B4%D0%B4%D0%B5%D1%80%D0%B6%D0%B0%D1%82%D1%8C-ff69b4?style=for-the-badge&logo=githubsponsors&logoColor=white)](http://vrajendra.ru/contacts/#donate)
-
-
+---
+title: Ответы на вопросы
+author: Враджендра Кумар Прабху
+avatar: vrajendra.jpg
+youtube: https://www.youtube.com/@vrajendraru
+site: http://vrajendra.ru/
+ask: http://vrajendra.ru/vopros/
+support: http://vrajendra.ru/contacts/#donate
+---
 
 ## [Выпуск 206](https://youtu.be/UE7ngTubQjo)
 

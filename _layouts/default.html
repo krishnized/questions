@@ -3,224 +3,327 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ page.title | default: site.title }}</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown.min.css">
+  <title>{{ page.title }}{% if page.author %} · {{ page.author }}{% endif %}</title>
+  {% if page.avatar %}<link rel="icon" href="{{ page.avatar }}">{% endif %}
+  <script>document.documentElement.className = 'js'</script>
   <style>
-    body { display: flex; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; }
-    aside { position: fixed; right: 0; top: 0; height: 100vh; overflow-y: auto; padding: 1rem .5rem; font-size: 0.8em; flex-shrink: 0; scrollbar-width: none; overscroll-behavior: contain; }
-    aside::-webkit-scrollbar { display: none; }
-    aside a { display: block; padding: .2em .5em; color: #888; text-decoration: none; transition: color .15s, background .15s; border-radius: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    aside a:hover { color: #0366d6; background: #e8f0fe; }
-    aside a.active { color: #0366d6; background: #e8f0fe; }
-    .markdown-body { max-width: 800px; margin: 0 auto; padding: 2rem; padding-right: 200px; flex: 1; min-width: 0; }
-    @media (max-width: 900px) {
+    :root {
+      --blue: #2557d6;
+      --ink: #1a1a1a;
+      --mute: #7a7a7a;
+      --line: #e4e4e4;
+      --serif: "Times New Roman", Times, serif;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; display: grid; grid-template-columns: 12rem minmax(0, 1fr); font-family: var(--sans); color: var(--ink); background: #fff; -webkit-font-smoothing: antialiased; }
+    a { color: var(--blue); text-underline-offset: .22em; text-decoration-thickness: 1px; text-decoration-color: color-mix(in srgb, currentColor 35%, transparent); }
+    [hidden] { display: none !important; }
+    ::highlight(q) { background: #fff1a8; }
+    .js .content:not(.ready) { visibility: hidden; }
+
+    aside { position: fixed; inset: 0 auto 0 0; width: 12rem; border-right: 1px solid var(--line); font-size: .95rem; }
+    aside nav { position: relative; height: 100%; overflow-y: auto; scroll-behavior: smooth; scrollbar-width: none; padding: 1.1rem 0 50vh; }
+    aside nav::-webkit-scrollbar { display: none; }
+    aside a { position: relative; display: block; padding: .4rem 1rem .4rem 2.5rem; color: var(--mute); text-decoration-line: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    aside a:hover { color: var(--ink); }
+    aside a.active { color: var(--ink); font-weight: 600; }
+    aside a.active::before { content: ""; position: absolute; left: 1.6rem; top: .55rem; bottom: .55rem; width: 3px; background: var(--blue); }
+    .top { position: fixed; left: 13.25rem; bottom: 1rem; padding: .45rem .9rem; border: 1px solid var(--line); border-radius: 2rem; background: #fff; color: var(--mute); font-size: .95rem; text-decoration-line: none; }
+    .top:hover { color: var(--ink); }
+
+    main { grid-column: 2; width: 100%; max-width: 74rem; margin: 0 auto; padding: 1.5rem 2.5rem 6rem; }
+    header { display: flex; align-items: center; gap: 2rem; }
+    header > div { flex: 1; min-width: 0; }
+    .avatar { width: 7.5rem; height: 7.5rem; border-radius: 50%; object-fit: cover; flex: none; }
+    h1 { margin: 0; font: 400 3.25rem/1.05 var(--serif); }
+    .author { margin: .3rem 0 0; font-size: 1.6rem; color: #333; }
+    .actions { margin-left: auto; display: flex; align-items: center; gap: 1.25rem; white-space: nowrap; }
+    .actions a { font-size: 1.05rem; }
+    .actions a:has(+ .btn) { padding-right: 1.25rem; border-right: 1px solid var(--line); }
+    .icon { display: inline-flex; color: var(--mute); }
+    .icon:hover { color: var(--ink); }
+    .icon svg { width: 1.4rem; height: 1.4rem; }
+    .btn { text-decoration-line: none; border: 1.5px solid var(--blue); border-radius: .4rem; padding: .65rem 1.25rem; transition: background .15s, color .15s; }
+    .btn:hover { background: var(--blue); color: #fff; }
+
+    .search { display: flex; align-items: center; gap: .9rem; margin: 1.1rem 0 1.5rem; padding: 0 1.1rem; height: 3.25rem; border: 1px solid #c8c8c8; border-radius: .5rem; }
+    .search:focus-within { border-color: var(--blue); }
+    .search svg { width: 1.5rem; height: 1.5rem; color: var(--blue); flex: none; }
+    .search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 1.05rem; color: var(--ink); }
+    .search input::placeholder { color: #8a8a8a; }
+
+    .content h2 { position: sticky; top: 0; z-index: 1; margin: 0; padding: 1.1rem 0 .55rem; background: #fff; border-bottom: 1px solid var(--line); font: 400 2.1rem/1.2 var(--serif); }
+    .content h2 a { text-decoration-line: none; }
+    .content h2 a:hover { text-decoration-line: underline; }
+    .content h3 { margin: 1.5rem 0 .5rem; font-size: 1.15rem; }
+    .content ul { list-style: none; margin: 0; padding: 0; }
+    .content img { max-width: 100%; height: auto; }
+
+    .row { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr) 13.25rem; column-gap: 1.1rem; padding: .9rem 0; }
+    .row:not([hidden]) ~ .row:not([hidden]) { border-top: 1px solid var(--line); }
+    .time { grid-column: 1; font: 1.375rem/1.4 var(--serif); text-decoration-line: none; }
+    .time:hover { text-decoration-line: underline; }
+    .q { grid-column: 2; }
+    .text { font: 1.3rem/1.4 var(--serif); text-wrap: pretty; }
+    .who { margin: .3rem 0 0; color: var(--mute); }
+    .ref { display: inline-block; margin-top: .35rem; text-decoration-line: none; }
+    .ref:hover { text-decoration-line: underline; }
+    .ref::after {
+      content: ""; display: inline-block; width: .55em; height: .55em; margin-left: .4em; background: var(--blue);
+      -webkit-mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+      mask: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2.5 9.5 9.5 2.5M4 2.5h5.5V8' fill='none' stroke='black' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/></svg>") center / contain no-repeat;
+    }
+    .tags { grid-column: 3; margin: .2rem 0 0; color: var(--mute); line-height: 1.5; }
+    .tags a { color: inherit; text-decoration-line: none; }
+    .tags a:hover { color: var(--blue); }
+    .empty { padding: 3rem 0; color: var(--mute); font: 1.3rem var(--serif); }
+
+    .om { position: fixed; right: 1.25rem; bottom: 1rem; font: 1.4rem/1 "Devanagari MT", Mangal, "Noto Serif Devanagari", var(--serif); color: var(--ink); opacity: .25; text-decoration-line: none; transition: opacity .2s; }
+    .om:hover { opacity: .8; }
+
+    dialog { width: min(90vw, 60rem); max-width: none; padding: 0; border: 0; background: none; }
+    dialog::backdrop { background: rgba(0, 0, 0, .85); }
+    dialog iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: .5rem; }
+
+    @media (max-width: 56rem) {
+      body { display: block; }
       aside { display: none; }
-      .markdown-body { padding: 1rem; padding-right: 1rem; }
-    }
-
-    .markdown-body, main {
-      position: relative;
-
-      section { position: relative; }
-
-      h1:first-of-type {
-        border-bottom: none;
-        margin-bottom: 0;
-      }
-
-      h2 {
-        position: sticky;
-        top: 0;
-        background: white;
-        padding: .5rem 0;
-        z-index: 1;
-
-        .anchor {
-          float: none;
-          opacity: 0;
-          color: #ccc;
-          text-decoration: none;
-          font-weight: 300;
-          cursor: pointer;
-          transition: opacity .15s, color .15s;
-        }
-        &:hover .anchor { opacity: 1; }
-        .anchor:hover { color: #0366d6; }
-      }
-
-      a {
-        text-underline-offset: .2em;
-        &.anchorjs-link {
-          text-decoration: none;
-        }
-      }
-
-      li > a[href^="#"] {
-        color: #888;
-        text-decoration: none;
-        font-size: 0.85em;
-        background: #f0f0f0;
-        padding: .15em .5em;
-        border-radius: 1em;
-        &:hover { color: #0366d6; background: #e0e8f0; }
-      }
-
-      ul {
-        list-style: none;
-        padding-left: 0;
-      }
-    }
-
-    .yt-modal {
-      display: none; position: fixed; inset: 0; z-index: 100;
-      background: rgba(0,0,0,.85); align-items: center; justify-content: center;
-      &.open { display: flex; }
-      iframe {
-        width: min(90vw, 960px); aspect-ratio: 16/9; border: none; border-radius: 8px;
-      }
-      @media (max-width: 900px) {
-        iframe { width: 100vw; border-radius: 0; }
-      }
+      main { padding: 1.25rem 1rem 4rem; }
+      header { flex-wrap: wrap; gap: 1rem 1.25rem; }
+      .avatar { width: 4.5rem; height: 4.5rem; }
+      h1 { font-size: 1.85rem; }
+      .author { font-size: 1.1rem; }
+      .actions { margin-left: 0; width: 100%; }
+      .row { grid-template-columns: 4.25rem minmax(0, 1fr); column-gap: .75rem; }
+      .time, .text { font-size: 1.15rem; }
+      .who, .tags, .ref { font-size: .9rem; }
+      .tags { grid-column: 2; }
+      .top { left: 1rem; }
+      .om { font-size: 1.2rem; right: 1rem; bottom: .75rem; }
+      dialog { width: 100vw; }
+      dialog iframe { border-radius: 0; }
     }
   </style>
 </head>
 <body>
-  <div class="yt-modal" id="yt-modal"><iframe id="yt-frame" allowfullscreen allow="autoplay"></iframe></div>
-  <aside id="toc"><nav></nav></aside>
-  <main class="markdown-body">
-    {{ content }}
+  <aside :onscroll.window.passive="track()" :fx="track(lit)">
+    <nav :fx="center(active, this)"><a :each="s in sections" :href="'#' + s.id" :text="s.title" :hidden="!lit.has(s.el)" :class="{ active: active === s.el }"></a></nav>
+  </aside>
+  <a class="top" href="#" :hidden="!away" :onclick.prevent="scrollTo({ top: 0 })">В начало ↑</a>
+  <main :onclick="play">
+    <header>
+      {% if page.avatar %}<img class="avatar" src="{{ page.avatar }}" alt="">{% endif %}
+      <div>
+        <h1>{{ page.title }}</h1>
+        {% if page.author %}<p class="author">{{ page.author }}</p>{% endif %}
+      </div>
+      {% if page.youtube or page.site or page.support or page.ask %}
+      <nav class="actions">
+        {% if page.youtube %}<a class="icon" href="{{ page.youtube }}" title="YouTube"><svg viewBox="0 0 24 24"><path fill="#f00" fill-rule="evenodd" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>{% endif %}
+        {% if page.site %}<a class="icon" href="{{ page.site }}" title="Сайт"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19M12 2.5a14.5 14.5 0 0 1 0 19M12 2.5a14.5 14.5 0 0 0 0 19"/></svg></a>{% endif %}
+        {% if page.support %}<a href="{{ page.support }}">Поддержать</a>{% endif %}
+        {% if page.ask %}<a class="btn" href="{{ page.ask }}">Задать вопрос</a>{% endif %}
+      </nav>
+      {% endif %}
+    </header>
+    <label class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></svg>
+      <input type="search" placeholder="Поиск по вопросам и темам" autocomplete="off" :value="q" :change="v => q = v" :onhashchange.window="sync()" :fx="route(q)">
+    </label>
+    <div class="content" :onclick="pick" :fx="highlight(q)">
+      {{ content }}
+    </div>
+    <p class="empty" :hidden="shown.size">Ничего не найдено</p>
   </main>
-  <script>
-    // Wrap each h2 + following content into sections
-    const main = document.querySelector('main');
-    const headings = [...main.querySelectorAll('h2[id]')];
-    console.log('Headings found:', headings.length);
+  <a class="om" href="https://krishnized.com/license/">ॐ</a>
+  <dialog :ref="player" :onclick.self="this.close()" :onclose="this.open || (video = '')"><iframe allow="autoplay; fullscreen" :src="video || 'about:blank'"></iframe></dialog>
+  <script type="module">
+    import sprae from 'https://cdn.jsdelivr.net/npm/sprae@13/dist/sprae.js';
 
-    headings.forEach(h => {
-      const section = document.createElement('section');
-      section.id = 's-' + h.id;
+    const content = document.querySelector('.content');
+    const norm = s => s.toLowerCase().replace(/ё/g, 'е');
+    const el = (tag, cls, text = '') => Object.assign(document.createElement(tag), { className: cls, textContent: text });
+
+    // Section ids used to carry an "s-" prefix; keep old links working
+    if (location.hash.startsWith('#s-')) location.replace('#' + location.hash.slice(3));
+
+    // Wrap each h2 with what follows it into a section; the section takes over the heading id
+    const sections = [...content.querySelectorAll('h2[id]')].map(h => {
+      const s = document.createElement('section');
+      s.id = h.id;
       h.removeAttribute('id');
-      h.before(section);
-      section.appendChild(h);
-      while (section.nextElementSibling && section.nextElementSibling.tagName !== 'H2') {
-        section.appendChild(section.nextElementSibling);
+      h.replaceWith(s);
+      s.append(h);
+      while (s.nextSibling && s.nextSibling.tagName !== 'H2') s.append(s.nextSibling);
+      s.setAttribute(':hidden', '!lit.has(this)');
+      return s;
+    });
+    const title = s => s.firstChild.textContent.trim();
+
+    // Row: [time](url) — _Name_: question (ответ — см. Выпуск N) [#Tag](#Tag) …
+    const DASH = /^\s*[—–−-]\s*/;
+    const REF = /\s*\(ответ\s*[—–−-]\s*см\.\s*выпуск\s*(\d+)\)/i;
+    const isWs = n => n.nodeType === 3 && !n.data.trim();
+    const isTime = n => n.tagName === 'A' && !n.getAttribute('href').startsWith('#');
+    const isTag = n => n.tagName === 'A' && n.textContent.startsWith('#');
+
+    for (const li of content.querySelectorAll('li')) {
+      const nodes = [...li.childNodes];
+      while (nodes.length && isWs(nodes[0])) nodes.shift();
+      while (nodes.length && isWs(nodes.at(-1))) nodes.pop();
+      if (!nodes.length || !isTime(nodes[0])) continue;
+      const time = nodes.shift();
+      if (nodes[0]?.nodeType === 3) {
+        nodes[0].data = nodes[0].data.replace(DASH, '');
+        if (!nodes[0].data) nodes.shift();
       }
-    });
-
-    // Build TOC
-    const nav = document.querySelector('#toc nav');
-    const aside = document.querySelector('#toc');
-    const sections = [...main.querySelectorAll('section[id]')];
-
-    // Add anchor links to headings
-    sections.forEach(s => {
-      const h = s.querySelector('h2');
-      const a = document.createElement('a');
-      a.className = 'anchor';
-      a.href = '#' + s.id;
-      a.textContent = '#';
-      h.prepend(a);
-    });
-    console.log('Sections created:', sections.length);
-    const sectionMap = new Map();
-
-    sections.forEach(s => {
-      const h = s.querySelector('h2');
-      const a = document.createElement('a');
-      a.href = '#' + s.id;
-      a.textContent = [...h.childNodes].filter(n => n.nodeType === 3 || !n.classList.contains('anchor')).map(n => n.textContent).join('').trim();
-      sectionMap.set(a, s);
-      nav.appendChild(a);
-    });
-
-    // Click to smooth scroll to section
-    nav.onclick = e => {
-      const a = e.target.closest('a');
-      if (a && sectionMap.has(a)) {
-        e.preventDefault();
-        e.stopPropagation();
-        sectionMap.get(a).scrollIntoView({ behavior: 'smooth' });
+      const name = nodes[0]?.tagName === 'EM' ? nodes.shift().textContent.trim() : null;
+      if (name && nodes[0]?.nodeType === 3) nodes[0].data = nodes[0].data.replace(/^\s*:\s*/, '');
+      const tags = nodes.filter(isTag);
+      let ref = null;
+      for (const n of nodes) {
+        if (n.nodeType !== 3 || !REF.test(n.data)) continue;
+        ref = REF.exec(n.data)[1];
+        n.data = n.data.replace(REF, '');
+        break;
       }
+
+      const q = el('div', 'q');
+      const text = el('div', 'text');
+      text.append(...nodes.filter(n => !isTag(n)));
+      q.append(text);
+      if (name) q.append(el('p', 'who', `— ${name}`));
+      if (ref) {
+        const a = el('a', 'ref', `Ответ — в выпуске ${ref}`);
+        a.href = '#выпуск-' + ref;
+        q.append(a);
+      }
+      time.className = 'time';
+      li.className = 'row';
+      li.replaceChildren(time, q);
+      if (tags.length) {
+        const t = el('p', 'tags');
+        tags.forEach((a, i) => {
+          a.textContent = a.textContent.slice(1);
+          if (i) t.append(', ');
+          t.append(a);
+        });
+        li.append(t);
+      }
+    }
+
+    // Search index: question, name, tags and issue title; nested sub-questions follow their parent row
+    const rows = [...content.querySelectorAll('li')].filter(li => !li.parentElement.closest('li')).map(li => {
+      const s = li.closest('section');
+      li.setAttribute(':hidden', '!shown.has(this)');
+      return { li, s, hay: norm(li.textContent + ' ' + (s ? title(s) : '')), tags: [...li.querySelectorAll('.tags a')].map(a => norm(a.textContent)) };
+    });
+    const tagSet = new Set(rows.flatMap(r => r.tags));
+    const asTag = q => (q = q.trim(), q.startsWith('#') && tagSet.has(norm(q.slice(1))) ? q : '');
+    // "#Tag" filters by tag (exact when it exists, else by prefix); anything else is plain text search
+    const matcher = q => {
+      q = norm(q.trim());
+      if (!q.startsWith('#')) return r => r.hay.includes(q);
+      const tag = q.slice(1), exact = tagSet.has(tag);
+      return r => r.tags.some(t => exact ? t === tag : t.startsWith(tag));
     };
 
-    // Sync TOC scroll with page scroll
-    const tocLinks = [...nav.querySelectorAll('a')];
-    let active = null;
+    const hl = CSS.highlights && new Highlight();
+    if (hl) CSS.highlights.set('q', hl);
+    const range = (n, start, end) => new StaticRange({ startContainer: n, startOffset: start, endContainer: n, endOffset: end });
 
-    function updateActive() {
-      let current = null;
-      for (const s of sections) {
-        if (s.getBoundingClientRect().top <= 120) current = s;
-      }
-      if (active !== current && current) {
-        active = current;
-        tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + current.id));
-      }
-      // Sync menu scroll proportionally to page scroll
-      const scrollRatio = window.scrollY / (document.body.scrollHeight - window.innerHeight);
-      aside.scrollTop = scrollRatio * (aside.scrollHeight - aside.clientHeight);
-    }
-    window.addEventListener('scroll', updateActive, { passive: true });
-    setTimeout(updateActive, 100);
+    // t=1h2m3s, t=125s, t=125; a number without a unit counts as seconds
+    const secs = t => [...(t ?? '').matchAll(/(\d+)([hm]?)/g)].reduce((n, [, v, u]) => n + v * (u === 'h' ? 3600 : u === 'm' ? 60 : 1), 0);
 
-    // Tag filtering (tags are capitalized Cyrillic words without dashes)
-    const lis = document.querySelectorAll('li');
-    const isTag = h => /^[А-ЯЁ][а-яё_]+$/.test(h);
+    const state = sprae(document.body, {
+      q: '',
+      active: null,
+      away: false,
+      video: '',
+      player: null,
+      sections: sections.map(s => ({ id: s.id, title: title(s), el: s })),
+      get shown() { return new Set(rows.filter(matcher(this.q)).map(r => r.li)); },
+      get lit() { return new Set(rows.filter(r => this.shown.has(r.li)).map(r => r.s)); },
 
-    function filter(tag) {
-      if (!isTag(tag)) { lis.forEach(li => li.hidden = false); return; }
-      lis.forEach(li => li.hidden = !li.textContent.includes('#' + tag));
-    }
+      // The section whose heading is stuck at the top is active. Deferred a tick so a filter's
+      // hidden sections are already out of layout when measured
+      track(lit = this.lit) {
+        queueMicrotask(() => {
+          let cur = null;
+          for (const s of sections) {
+            if (!lit.has(s)) continue;
+            if (s.getBoundingClientRect().top > 1) { cur ??= s; break; }
+            cur = s;
+          }
+          this.active = cur;
+          this.away = scrollY > innerHeight;
+        });
+      },
+      center(active, nav) {
+        const a = active && nav.querySelector(`a[href="#${active.id}"]`);
+        if (a) nav.scrollTop = a.offsetTop - (nav.clientHeight - a.offsetHeight) / 2;
+      },
 
-    window.addEventListener('hashchange', () => filter(decodeURIComponent(location.hash.slice(1))));
-    filter(decodeURIComponent(location.hash.slice(1)));
-
-    document.addEventListener('click', e => {
-      const a = e.target.closest('li > a[href^="#"]');
-      if (a) {
+      // Tag click toggles the "#Tag" filter
+      pick(e) {
+        const a = e.target.closest('.tags a');
+        if (!a) return;
         e.preventDefault();
-        const tag = decodeURIComponent(a.hash.slice(1));
-        location.hash = location.hash === '#' + tag ? '' : tag;
-      }
+        const q = '#' + a.textContent;
+        this.q = this.q === q ? '' : q;
+        scrollTo({ top: 0, behavior: 'instant' });
+      },
+      // A tag in the hash is a filter (old-style links); anything else is a section anchor the browser handles
+      sync() {
+        const h = decodeURIComponent(location.hash);
+        if (asTag(h)) this.q = h;
+      },
+      route(q) {
+        const tag = asTag(q), cur = decodeURIComponent(location.hash);
+        if (tag ? cur !== tag : asTag(cur)) history.replaceState(null, '', location.pathname + location.search + tag);
+      },
+      highlight(q) {
+        if (!hl) return;
+        hl.clear();
+        q = norm(q.trim());
+        if (!q) return;
+        const hit = matcher(q);
+        for (const r of rows) {
+          if (!hit(r)) continue;
+          if (q.startsWith('#')) {
+            for (const a of r.li.querySelectorAll('.tags a')) if (hit({ tags: [norm(a.textContent)] })) hl.add(range(a.firstChild, 0, a.firstChild.length));
+            continue;
+          }
+          const walker = document.createTreeWalker(r.li, NodeFilter.SHOW_TEXT);
+          for (let n; n = walker.nextNode();) {
+            const t = norm(n.data);
+            if (t.length !== n.data.length) continue;
+            for (let i = t.indexOf(q); i >= 0; i = t.indexOf(q, i + q.length)) hl.add(range(n, i, i + q.length));
+          }
+        }
+      },
+
+      // YouTube links open in the modal player; the displayed timecode is authoritative, t= is the fallback
+      play(e) {
+        const a = e.target.closest('a[href*="youtu"]');
+        if (!a) return;
+        const u = new URL(a.href);
+        const id = u.hostname.endsWith('youtu.be') ? u.pathname.slice(1)
+          : u.pathname.match(/\/(?:live|embed|v|shorts)\/([^/?]+)/)?.[1] ?? u.searchParams.get('v');
+        if (!id) return;
+        e.preventDefault();
+        const text = a.textContent.trim();
+        const start = /^\d+(:\d+)+$/.test(text) ? text.split(':').reduce((n, x) => n * 60 + +x, 0) : secs(u.searchParams.get('t'));
+        this.player.showModal();
+        this.video = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&start=${start}`;
+      },
     });
-
-    // YouTube modal player
-    const modal = document.getElementById('yt-modal');
-    const frame = document.getElementById('yt-frame');
-
-    function ytId(url) {
-      const u = new URL(url);
-      if (u.hostname.includes('youtu.be')) return u.pathname.slice(1);
-      const p = u.pathname.match(/\/(live|embed|v|shorts)\/([^/?]+)/);
-      return p ? p[2] : u.searchParams.get('v');
-    }
-
-    function ytTime(url) {
-      const t = new URL(url).searchParams.get('t');
-      if (!t) return 0;
-      const m = t.match(/(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?/);
-      return (+(m[1]||0))*3600 + (+(m[2]||0))*60 + (+(m[3]||0));
-    }
-
-    document.addEventListener('click', e => {
-      const a = e.target.closest('a[href*="youtube.com"], a[href*="youtu.be"]');
-      if (!a || a.classList.contains('anchor')) return;
-      e.preventDefault();
-      e.stopPropagation();
-      const id = ytId(a.href);
-      console.log(a.href)
-      if (!id) return;
-      frame.src = `https://www.youtube.com/embed/${id}?autoplay=1&start=${ytTime(a.href)}`;
-      modal.classList.add('open');
-    }, true);
-
-    modal.addEventListener('click', e => {
-      if (e.target === modal) { modal.classList.remove('open'); frame.src = ''; }
-    });
-
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.classList.contains('open')) { modal.classList.remove('open'); frame.src = ''; }
-    });
+    content.classList.add('ready');
+    // Layout changed under the browser's initial anchor jump; redo it
+    document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ behavior: 'instant' });
+    state.sync();
   </script>
 </body>
 </html>
